@@ -98,69 +98,90 @@
     <div id="receiptsContainer"></div>
   </div>
 
-  <script>
-    let receipts = JSON.parse(localStorage.getItem('receipts') || '[]').reverse();
-    const container = document.getElementById("receiptsContainer");
-    const searchInput = document.getElementById("searchInput");
+ <script>
+  let receipts = JSON.parse(localStorage.getItem('receipts') || '[]').reverse();
+  const container = document.getElementById("receiptsContainer");
+  const searchInput = document.getElementById("searchInput");
 
-    function displayReceipts(list) {
-      container.innerHTML = "";
+  // عنصر جديد باش نعرض فيه المجموع
+  const totalBox = document.createElement("div");
+  totalBox.style.marginBottom = "15px";
+  totalBox.style.fontWeight = "bold";
+  totalBox.style.fontSize = "18px";
+  container.parentNode.insertBefore(totalBox, container);
 
-      if (list.length === 0) {
-        container.innerHTML = "<p>❌ لا توجد وصولات مطابقة.</p>";
-        return;
-      }
-
-      list.forEach((r, index) => {
-        const div = document.createElement("div");
-        div.className = "receipt";
-        div.innerHTML = `
-          <button class="delete-btn" onclick="deleteReceipt('${r.id}')">🗑️ حذف</button>
-          🧾 <strong>رقم:</strong> ${r.id || '---'}<br>
-          📅 <strong>تاريخ:</strong> ${r.date || '---'}<br>
-          👤 <strong>الاسم:</strong> ${r.name || '---'}<br>
-          📲 <strong>الرقم:</strong> ${r.number || '---'}<br>
-          💰 <strong>المجموع:</strong> ${r.total || '---'} درهم<br>
-          🧺 <pre>${r.content || ''}</pre>
-          
-        `;
-        container.appendChild(div);
-      });
+  function displayReceipts(list) {
+    container.innerHTML = "";
+    if (list.length === 0) {
+      container.innerHTML = "<p>❌ لا توجد وصولات مطابقة.</p>";
+      totalBox.innerHTML = "";
+      return;
     }
 
-    // حذف الوصل
-    function deleteReceipt(id) {
-      if (confirm("هل أنت متأكد أنك تريد حذف هذا الوصل؟")) {
-        receipts = receipts.filter(r => r.id !== id);
-        localStorage.setItem('receipts', JSON.stringify(receipts.slice().reverse()));
-        displayReceipts(filterReceipts(searchInput.value));
-      }
-    }
-
-    // تصفية حسب البحث
-    function filterReceipts(query) {
-      query = query.trim().toLowerCase();
-      return receipts.filter(r =>
-        (r.name && r.name.toLowerCase().includes(query)) ||
-        (r.number && r.number.includes(query)) ||
-        (r.id && r.id.includes(query))
+    // حساب المجموع إذا كاين نفس الاسم
+    const nameQuery = searchInput.value.trim().toLowerCase();
+    if (nameQuery) {
+      const sameNameReceipts = receipts.filter(r =>
+        r.name && r.name.toLowerCase() === nameQuery
       );
+      if (sameNameReceipts.length > 0) {
+        const totalSum = sameNameReceipts.reduce((sum, r) => sum + (parseFloat(r.total) || 0), 0);
+        totalBox.innerHTML = `💵 <span style="color:green">المجموع الكلي للوصولات باسم "${sameNameReceipts[0].name}" هو: ${totalSum} درهم</span>`;
+      } else {
+        totalBox.innerHTML = "";
+      }
+    } else {
+      totalBox.innerHTML = "";
     }
 
-    // عرض الكل أولاً
-    displayReceipts(receipts);
-
-    // عند الكتابة في خانة البحث
-    searchInput.addEventListener("input", function () {
-      const filtered = filterReceipts(this.value);
-      displayReceipts(filtered);
+    list.forEach((r) => {
+      const div = document.createElement("div");
+      div.className = "receipt";
+      div.innerHTML = `
+        <button class="delete-btn" onclick="deleteReceipt('${r.id}')">🗑️ حذف</button>
+        🧾 <strong>رقم:</strong> ${r.id || '---'}<br>
+        📅 <strong>تاريخ:</strong> ${r.date || '---'}<br>
+        👤 <strong>الاسم:</strong> ${r.name || '---'}<br>
+        📲 <strong>الرقم:</strong> ${r.number || '---'}<br>
+        💰 <strong>المجموع:</strong> ${r.total || '---'} درهم<br>
+        🧺 <pre>${r.content || ''}</pre>
+      `;
+      container.appendChild(div);
     });
-    function paid() {
-  window.location.href = 'paid.html';
-}
-function fast() {
-  window.location.href = 'fast.html';
-}
-  </script>
+  }
+
+  function deleteReceipt(id) {
+    if (confirm("هل أنت متأكد أنك تريد حذف هذا الوصل؟")) {
+      receipts = receipts.filter(r => r.id !== id);
+      localStorage.setItem('receipts', JSON.stringify(receipts.slice().reverse()));
+      displayReceipts(filterReceipts(searchInput.value));
+    }
+  }
+
+  function filterReceipts(query) {
+    query = query.trim().toLowerCase();
+    return receipts.filter(r =>
+      (r.name && r.name.toLowerCase().includes(query)) ||
+      (r.number && r.number.includes(query)) ||
+      (r.id && r.id.includes(query))
+    );
+  }
+
+  displayReceipts(receipts);
+
+  searchInput.addEventListener("input", function () {
+    const filtered = filterReceipts(this.value);
+    displayReceipts(filtered);
+  });
+
+  function paid() {
+    window.location.href = 'paid.html';
+  }
+
+  function fast() {
+    window.location.href = 'fast.html';
+  }
+</script>
+
 </body>
 </html>
