@@ -98,16 +98,16 @@
     <div id="receiptsContainer"></div>
   </div>
 
- <script>
+<script>
   let receipts = JSON.parse(localStorage.getItem('receipts') || '[]').reverse();
   const container = document.getElementById("receiptsContainer");
   const searchInput = document.getElementById("searchInput");
 
-  // عنصر جديد باش نعرض فيه المجموع
   const totalBox = document.createElement("div");
   totalBox.style.marginBottom = "15px";
   totalBox.style.fontWeight = "bold";
   totalBox.style.fontSize = "18px";
+  totalBox.style.color = "green";
   container.parentNode.insertBefore(totalBox, container);
 
   function displayReceipts(list) {
@@ -118,15 +118,17 @@
       return;
     }
 
-    // حساب المجموع إذا كاين نفس الاسم
     const nameQuery = searchInput.value.trim().toLowerCase();
     if (nameQuery) {
       const sameNameReceipts = receipts.filter(r =>
         r.name && r.name.toLowerCase() === nameQuery
       );
       if (sameNameReceipts.length > 0) {
-        const totalSum = sameNameReceipts.reduce((sum, r) => sum + (parseFloat(r.total) || 0), 0);
-        totalBox.innerHTML = `💵 <span style="color:green">المجموع الكلي للوصولات باسم "${sameNameReceipts[0].name}" هو: ${totalSum} درهم</span>`;
+        const totalSum = sameNameReceipts.reduce((sum, r) => {
+          const amount = parseFloat((r.total || '0').toString().replace(/[^\d.-]/g, ''));
+          return sum + amount;
+        }, 0);
+        totalBox.innerHTML = `💵 المجموع الكلي للوصولات باسم "<strong>${sameNameReceipts[0].name}</strong>" هو: ${totalSum} درهم`;
       } else {
         totalBox.innerHTML = "";
       }
@@ -182,6 +184,7 @@
     window.location.href = 'fast.html';
   }
 </script>
+
 
 </body>
 </html>
