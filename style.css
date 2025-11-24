@@ -1,5 +1,6 @@
-body {
+body,html {
       font-family: 'Arial', sans-serif;
+      height: 100%;
       background: #f2f2f2;
       margin: 0;
       padding: 0;
@@ -11,16 +12,36 @@ body {
   padding: 4px;
   gap: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
+}
+#ido{
+  padding: 4px;
+  border-radius: 10px;
+  background-color: #4f97c7;
 }
 
 .container {
+  height: 85%;
   background: #fff;
   padding: 20px;
   margin: 10px;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+}
+#aljoz1{
+ 
+  width: 70%;
+  padding: 6px;
+}
+#aljoz2{
+  padding: 6px;
+ 
+}
+#clin{
+  background-color: #fff;
 }
 
 .tabs {
@@ -73,8 +94,18 @@ body {
   margin-top: 5px;
 }
 
-textarea, input {
+textarea {
   width: 100%;
+  height: 400px !important;
+  font-size: 16px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+input{
+  width: 45%;
   font-size: 16px;
   padding: 10px;
   margin-bottom: 10px;
