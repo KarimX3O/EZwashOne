@@ -179,6 +179,7 @@ button:hover {
 
 .total {
   text-align: center;
+  align-self: center;
   font-weight: bold;
   margin-top: 10px;
   font-size: 18px;
